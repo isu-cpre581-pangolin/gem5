@@ -411,6 +411,9 @@ class DefaultCommit
     /** Commit width, in instructions. */
     const unsigned commitWidth;
 
+    /** When true, allow imprecise faults. */
+    const bool impreciseFaults;
+
     /** Number of Reorder Buffers */
     unsigned numRobs;
 

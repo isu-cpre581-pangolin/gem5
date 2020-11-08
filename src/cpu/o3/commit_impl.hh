@@ -89,6 +89,7 @@ DefaultCommit<Impl>::DefaultCommit(O3CPU *_cpu, DerivO3CPUParams *params)
       fetchToCommitDelay(params->commitToFetchDelay),
       renameWidth(params->renameWidth),
       commitWidth(params->commitWidth),
+      impreciseFaults(params->impreciseFaults),
       numThreads(params->numThreads),
       drainPending(false),
       drainImminent(false),
@@ -1270,25 +1271,29 @@ DefaultCommit<Impl>::commitHead(const DynInstPtr &head_inst, unsigned inst_num)
                 tid, head_inst->seqNum, head_inst->pcState());
 
 #ifndef IMPRECISE_FAULTS
-        // cpre581 - want imprecise faults, so we CAN'T do this
-        if (iewStage->hasStoresToWB(tid) || inst_num > 0) {
-            DPRINTF(Commit,
-                    "[tid:%i] [sn:%llu] "
-                    "Stores outstanding, fault must wait.\n",
-                    tid, head_inst->seqNum);
-            return false;
+        if (!impreciseFault) {
+            // cpre581 - if you want imprecise faults, don't do this
+            if (iewStage->hasStoresToWB(tid) || inst_num > 0) {
+                DPRINTF(Commit,
+                        "[tid:%i] [sn:%llu] "
+                        "Stores outstanding, fault must wait.\n",
+                        tid, head_inst->seqNum);
+                return false;
+            }
         }
 
 #endif
         head_inst->setCompleted();
 
 #ifndef IMPRECISE_FAULTS
-        // cpre581 - want imprecise faults, so we CAN'T do this
-        // If instruction has faulted, let the checker execute it and
-        // check if it sees the same fault and control flow.
-        if (cpu->checker) {
-            // Need to check the instruction before its fault is processed
-            cpu->checker->verify(head_inst);
+        // cpre581 - if you want imprecise faults, don't do this
+        if (!impreciseFaults) {
+            // If instruction has faulted, let the checker execute it and
+            // check if it sees the same fault and control flow.
+            if (cpu->checker) {
+                // Need to check the instruction before its fault is processed
+                cpu->checker->verify(head_inst);
+            }
         }
 
 #endif
