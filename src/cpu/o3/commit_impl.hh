@@ -979,6 +979,41 @@ template <class Impl>
 void
 DefaultCommit<Impl>::commitInsts()
 {
+    if(impreciseFaults){
+        for (int inst_num = 0; inst_num < wbWidth &&
+                 toCommit->insts[inst_num]; inst_num++) {
+             DynInstPtr inst = toCommit->insts[inst_num];
+             ThreadID tid = inst->threadNumber;
+            
+            // Some instructions will be sent to commit without having
+            // executed because they need commit to handle them.
+            // E.g. Strictly ordered loads have not actually executed when they
+            // are first sent to commit.  Instead commit must tell the LSQ
+            // when it's ready to execute the strictly ordered load.
+            if (!inst->isSquashed() && inst->isExecuted() && inst->getFault() == NoFault) {
+                int dependents = instQueue.wakeDependents(inst);
+
+                for (int i = 0; i < inst->numDestRegs(); i++) {
+                    // Mark register as ready if not pinned
+                    if (inst->renamedDestRegIdx(i)->
+                            getNumPinnedWritesToComplete() == 0) {
+                        DPRINTF(IEW,"Setting Destination Register %i (%s)\n",
+                                inst->renamedDestRegIdx(i)->index(),
+                                inst->renamedDestRegIdx(i)->className());
+                     scoreboard->setReg(inst->renamedDestRegIdx(i));
+                    }
+                }
+
+                if (dependents) {
+                    producerInst[tid]++;
+                    consumerInst[tid]+= dependents;
+                }
+                writebackCount[tid]++;
+            }
+        }
+        instQueue.scheduleReadyInsts();
+    }
+    
     ////////////////////////////////////
     // Handle commit
     // Note that commit will be handled prior to putting new
