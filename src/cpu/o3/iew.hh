@@ -359,8 +359,8 @@ class DefaultIEW
      */
     bool wroteToTimeBuffer;
   
-    /** When true, allow imprecise faults. */
-    const bool impreciseFaults;
+    /** When false, removes bypassing from ROB. */
+    const bool robBypass;
 
     /** Debug function to print instructions that are issued this cycle. */
     void printAvailableInsts();
