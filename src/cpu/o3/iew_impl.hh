@@ -78,7 +78,7 @@ DefaultIEW<Impl>::DefaultIEW(O3CPU *_cpu, DerivO3CPUParams *params)
       wbCycle(0),
       wbWidth(params->wbWidth),
       numThreads(params->numThreads),
-      impreciseFaults(params->impreciseFaults)
+      robBypass(params->robBypass)
 {
     if (dispatchWidth > Impl::MaxWidth)
         fatal("dispatchWidth (%d) is larger than compiled limit (%d),\n"
@@ -1484,7 +1484,7 @@ DefaultIEW<Impl>::writebackInsts()
         ppToCommit->notify(inst);
 
         
-        if(!impreciseFaults){
+        if(robBypass){
             // Some instructions will be sent to commit without having
             // executed because they need commit to handle them.
             // E.g. Strictly ordered loads have not actually executed when they
