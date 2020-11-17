@@ -77,7 +77,8 @@ DefaultIEW<Impl>::DefaultIEW(O3CPU *_cpu, DerivO3CPUParams *params)
       wbNumInst(0),
       wbCycle(0),
       wbWidth(params->wbWidth),
-      numThreads(params->numThreads)
+      numThreads(params->numThreads),
+      impreciseFaults(params->impreciseFaults)
 {
     if (dispatchWidth > Impl::MaxWidth)
         fatal("dispatchWidth (%d) is larger than compiled limit (%d),\n"
@@ -1482,30 +1483,33 @@ DefaultIEW<Impl>::writebackInsts()
         // instruction.
         ppToCommit->notify(inst);
 
-        // Some instructions will be sent to commit without having
-        // executed because they need commit to handle them.
-        // E.g. Strictly ordered loads have not actually executed when they
-        // are first sent to commit.  Instead commit must tell the LSQ
-        // when it's ready to execute the strictly ordered load.
-        if (!inst->isSquashed() && inst->isExecuted() && inst->getFault() == NoFault) {
-            int dependents = instQueue.wakeDependents(inst);
+        
+        if(!impreciseFaults){
+            // Some instructions will be sent to commit without having
+            // executed because they need commit to handle them.
+            // E.g. Strictly ordered loads have not actually executed when they
+            // are first sent to commit.  Instead commit must tell the LSQ
+            // when it's ready to execute the strictly ordered load.
+            if (!inst->isSquashed() && inst->isExecuted() && inst->getFault() == NoFault) {
+                int dependents = instQueue.wakeDependents(inst);
 
-            for (int i = 0; i < inst->numDestRegs(); i++) {
-                // Mark register as ready if not pinned
-                if (inst->renamedDestRegIdx(i)->
-                        getNumPinnedWritesToComplete() == 0) {
-                    DPRINTF(IEW,"Setting Destination Register %i (%s)\n",
-                            inst->renamedDestRegIdx(i)->index(),
-                            inst->renamedDestRegIdx(i)->className());
-                    scoreboard->setReg(inst->renamedDestRegIdx(i));
+                for (int i = 0; i < inst->numDestRegs(); i++) {
+                    // Mark register as ready if not pinned
+                    if (inst->renamedDestRegIdx(i)->
+                            getNumPinnedWritesToComplete() == 0) {
+                        DPRINTF(IEW,"Setting Destination Register %i (%s)\n",
+                                inst->renamedDestRegIdx(i)->index(),
+                                inst->renamedDestRegIdx(i)->className());
+                     scoreboard->setReg(inst->renamedDestRegIdx(i));
+                    }
                 }
-            }
 
-            if (dependents) {
-                producerInst[tid]++;
-                consumerInst[tid]+= dependents;
+                if (dependents) {
+                    producerInst[tid]++;
+                    consumerInst[tid]+= dependents;
+                }
+                writebackCount[tid]++;
             }
-            writebackCount[tid]++;
         }
     }
 }
