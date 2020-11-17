@@ -1005,11 +1005,11 @@ DefaultCommit<Impl>::commitInsts()
                     }
                 }
 
-                if (dependents) {
-                    producerInst[tid]++;
-                    consumerInst[tid]+= dependents;
-                }
-                writebackCount[tid]++;
+//                 if (dependents) {
+//                     producerInst[tid]++;
+//                     consumerInst[tid]+= dependents;
+//                 }
+//                 writebackCount[tid]++;
             }
         }
         instQueue.scheduleReadyInsts();
