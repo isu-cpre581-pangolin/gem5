@@ -90,6 +90,7 @@ DefaultCommit<Impl>::DefaultCommit(O3CPU *_cpu, DerivO3CPUParams *params)
       renameWidth(params->renameWidth),
       commitWidth(params->commitWidth),
       impreciseFaults(params->impreciseFaults),
+      robBypass(params->robBypass),
       numThreads(params->numThreads),
       drainPending(false),
       drainImminent(false),
@@ -979,7 +980,7 @@ template <class Impl>
 void
 DefaultCommit<Impl>::commitInsts()
 {
-    if(impreciseFaults){
+    if(!robBypass){
         for (int inst_num = 0; inst_num < wbWidth &&
                  toCommit->insts[inst_num]; inst_num++) {
              DynInstPtr inst = toCommit->insts[inst_num];
