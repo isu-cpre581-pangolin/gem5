@@ -1005,7 +1005,7 @@ DefaultCommit<Impl>::commitInsts()
                     // Mark register as ready if not pinned
                     if (inst->renamedDestRegIdx(i)->
                             getNumPinnedWritesToComplete() == 0) {
-                        DPRINTF(IEW,"Setting Destination Register %i (%s)\n",
+                        //DPRINTF(IEW,"Setting Destination Register %i (%s)\n",
                                 inst->renamedDestRegIdx(i)->index(),
                                 inst->renamedDestRegIdx(i)->className());
                      scoreboard->setReg(inst->renamedDestRegIdx(i));
