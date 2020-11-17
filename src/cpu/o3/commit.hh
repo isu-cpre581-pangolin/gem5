@@ -413,6 +413,9 @@ class DefaultCommit
 
     /** Commit width, in instructions. */
     const unsigned commitWidth;
+  
+    /** Writeback width. */
+    unsigned wbWidth;
 
     /** When true, allow imprecise faults. */
     const bool impreciseFaults;
