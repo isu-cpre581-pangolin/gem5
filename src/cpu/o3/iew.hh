@@ -358,6 +358,9 @@ class DefaultIEW
      * CPU can deschedule itself if there is no activity.
      */
     bool wroteToTimeBuffer;
+  
+    /** When true, allow imprecise faults. */
+    const bool impreciseFaults;
 
     /** Debug function to print instructions that are issued this cycle. */
     void printAvailableInsts();
