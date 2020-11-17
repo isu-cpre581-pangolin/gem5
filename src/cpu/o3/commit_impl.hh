@@ -92,6 +92,7 @@ DefaultCommit<Impl>::DefaultCommit(O3CPU *_cpu, DerivO3CPUParams *params)
       impreciseFaults(params->impreciseFaults),
       robBypass(params->robBypass),
       numThreads(params->numThreads),
+      wbWidth(params->wbWidth),
       drainPending(false),
       drainImminent(false),
       trapLatency(params->trapLatency),
@@ -113,6 +114,11 @@ DefaultCommit<Impl>::DefaultCommit(O3CPU *_cpu, DerivO3CPUParams *params)
             priority_list.push_back(tid);
         }
     }
+          
+    if (wbWidth > Impl::MaxWidth)
+        fatal("wbWidth (%d) is larger than compiled limit (%d),\n"
+             "\tincrease MaxWidth in src/cpu/o3/impl.hh\n",
+             wbWidth, static_cast<int>(Impl::MaxWidth));
 
     for (ThreadID tid = 0; tid < Impl::MaxThreads; tid++) {
         commitStatus[tid] = Idle;
@@ -981,6 +987,7 @@ void
 DefaultCommit<Impl>::commitInsts()
 {
     if(!robBypass){
+        toCommit = iewQueue->getWire(0);
         for (int inst_num = 0; inst_num < wbWidth &&
                  toCommit->insts[inst_num]; inst_num++) {
              DynInstPtr inst = toCommit->insts[inst_num];
