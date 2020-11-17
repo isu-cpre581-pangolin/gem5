@@ -416,6 +416,9 @@ class DefaultCommit
 
     /** When true, allow imprecise faults. */
     const bool impreciseFaults;
+  
+    /** When false, removes bypass from ROB. */
+    const bool robBypass;
 
     /** Number of Reorder Buffers */
     unsigned numRobs;
