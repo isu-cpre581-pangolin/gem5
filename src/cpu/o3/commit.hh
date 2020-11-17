@@ -92,6 +92,7 @@ class DefaultCommit
     typedef typename CPUPol::RenameMap RenameMap;
     typedef typename CPUPol::ROB ROB;
 
+    typedef typename CPUPol::IQ IQ;
     typedef typename CPUPol::TimeStruct TimeStruct;
     typedef typename CPUPol::FetchStruct FetchStruct;
     typedef typename CPUPol::IEWStruct IEWStruct;
@@ -340,6 +341,9 @@ class DefaultCommit
     /** Wire to read information from IEW (for ROB). */
     typename TimeBuffer<TimeStruct>::wire robInfoFromIEW;
 
+    /** Wire to write infromation heading to commit. */
+    typename TimeBuffer<IEWStruct>::wire toCommit;  
+  
     TimeBuffer<FetchStruct> *fetchQueue;
 
     typename TimeBuffer<FetchStruct>::wire fromFetch;
@@ -357,6 +361,9 @@ class DefaultCommit
     typename TimeBuffer<RenameStruct>::wire fromRename;
 
   public:
+    /** Instruction queue. */
+    IQ instQueue;  
+  
     /** ROB interface. */
     ROB *rob;
 
