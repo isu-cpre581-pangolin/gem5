@@ -49,6 +49,9 @@
 #include "cpu/timebuf.hh"
 #include "enums/CommitPolicy.hh"
 #include "sim/probe/probe.hh"
+#include "cpu/o3/comm.hh"
+#include "cpu/o3/lsq.hh"
+#include "cpu/o3/scoreboard.hh"
 
 struct DerivO3CPUParams;
 
