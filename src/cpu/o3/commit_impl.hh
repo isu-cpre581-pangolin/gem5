@@ -289,6 +289,7 @@ DefaultCommit<Impl>::setIEWQueue(TimeBuffer<IEWStruct> *iq_ptr)
 {
     iewQueue = iq_ptr;
 
+    toCommit = iewQueue->getWire(0);
     // Setup wire to get instructions from IEW.
     fromIEW = iewQueue->getWire(-iewToCommitDelay);
 }
@@ -987,7 +988,6 @@ void
 DefaultCommit<Impl>::commitInsts()
 {
     if(!robBypass){
-        toCommit = iewQueue->getWire(0);
         for (int inst_num = 0; inst_num < wbWidth &&
                  toCommit->insts[inst_num]; inst_num++) {
              DynInstPtr inst = toCommit->insts[inst_num];
