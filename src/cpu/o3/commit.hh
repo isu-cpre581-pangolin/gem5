@@ -369,6 +369,9 @@ class DefaultCommit
   
     /** ROB interface. */
     ROB *rob;
+  
+    /** Scoreboard pointer. */
+    Scoreboard* scoreboard;
 
   private:
     /** Pointer to O3CPU. */
