@@ -211,6 +211,9 @@ class DefaultCommit
 
     /* Reset HTM tracking, e.g. after an abort */
     void resetHtmStartsStops(ThreadID);
+  
+    /** Sets pointer to the scoreboard. */
+    void setScoreboard(Scoreboard *sb_ptr);
 
     /** Ticks the commit stage, which tries to commit instructions. */
     void tick();
@@ -366,6 +369,9 @@ class DefaultCommit
   
     /** ROB interface. */
     ROB *rob;
+  
+    /** Sets pointer to the scoreboard. */
+    void setScoreboard(Scoreboard *sb_ptr);
 
   private:
     /** Pointer to O3CPU. */
