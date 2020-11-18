@@ -393,7 +393,7 @@ DefaultCommit<Impl>::drainSanityCheck() const
 
 template<class Impl>
 void
-DefaultIEW<Impl>::setScoreboard(Scoreboard *sb_ptr)
+DefaultCommit<Impl>::setScoreboard(Scoreboard *sb_ptr)
 {
     scoreboard = sb_ptr;
 }
