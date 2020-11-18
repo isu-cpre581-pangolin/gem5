@@ -1007,7 +1007,7 @@ DefaultCommit<Impl>::commitInsts()
                             getNumPinnedWritesToComplete() == 0) {
                         //DPRINTF(IEW,"Setting Destination Register %i (%s)\n",
                                 inst->renamedDestRegIdx(i)->index(),
-                                inst->renamedDestRegIdx(i)->className());
+                                inst->renamedDestRegIdx(i)->className();
                      scoreboard->setReg(inst->renamedDestRegIdx(i));
                     }
                 }
