@@ -98,7 +98,8 @@ DefaultCommit<Impl>::DefaultCommit(O3CPU *_cpu, DerivO3CPUParams *params)
       trapLatency(params->trapLatency),
       canHandleInterrupts(true),
       avoidQuiesceLiveLock(false),
-      stats(_cpu, this)
+      stats(_cpu, this),
+      instQueue(_cpu, nullptr, params)
 {
     if (commitWidth > Impl::MaxWidth)
         fatal("commitWidth (%d) is larger than compiled limit (%d),\n"
