@@ -369,9 +369,6 @@ class DefaultCommit
   
     /** ROB interface. */
     ROB *rob;
-  
-    /** Sets pointer to the scoreboard. */
-    void setScoreboard(Scoreboard *sb_ptr);
 
   private:
     /** Pointer to O3CPU. */
