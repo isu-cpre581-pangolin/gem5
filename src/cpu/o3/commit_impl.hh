@@ -391,6 +391,13 @@ DefaultCommit<Impl>::drainSanityCheck() const
     }
 }
 
+template<class Impl>
+void
+DefaultIEW<Impl>::setScoreboard(Scoreboard *sb_ptr)
+{
+    scoreboard = sb_ptr;
+}
+
 template <class Impl>
 bool
 DefaultCommit<Impl>::isDrained() const
