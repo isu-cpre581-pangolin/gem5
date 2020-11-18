@@ -753,7 +753,10 @@ InstructionQueue<Impl>::processFUCompletion(const DynInstPtr &inst, int fu_idx)
     // The CPU could have been sleeping until this op completed (*extremely*
     // long latency op).  Wake it if it was.  This may be overkill.
    --wbOutstanding;
-    iewStage->wakeCPU();
+    
+    /* Commenting out this line in order to use InstructionQueue 
+       constuctor with commit class instead of iew */
+    //iewStage->wakeCPU();
 
     if (fu_idx > -1)
         fuPool->freeUnitNextCycle(fu_idx);
