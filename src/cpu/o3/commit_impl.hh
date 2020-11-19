@@ -80,6 +80,7 @@ DefaultCommit<Impl>::processTrapEvent(ThreadID tid)
 template <class Impl>
 DefaultCommit<Impl>::DefaultCommit(O3CPU *_cpu, DerivO3CPUParams *params)
     : commitPolicy(params->smtCommitPolicy),
+      instQueue(_cpu, nullptr, params),
       cpu(_cpu),
       iewToCommitDelay(params->iewToCommitDelay),
       commitToIEWDelay(params->commitToIEWDelay),
@@ -87,17 +88,16 @@ DefaultCommit<Impl>::DefaultCommit(O3CPU *_cpu, DerivO3CPUParams *params)
       fetchToCommitDelay(params->commitToFetchDelay),
       renameWidth(params->renameWidth),
       commitWidth(params->commitWidth),
+      wbWidth(params->wbWidth),
       impreciseFaults(params->impreciseFaults),
       robBypass(params->robBypass),
       numThreads(params->numThreads),
-      wbWidth(params->wbWidth),
       drainPending(false),
       drainImminent(false),
       trapLatency(params->trapLatency),
       canHandleInterrupts(true),
       avoidQuiesceLiveLock(false),
-      stats(_cpu, this),
-      instQueue(_cpu, nullptr, params)
+      stats(_cpu, this)
 {
     if (commitWidth > Impl::MaxWidth)
         fatal("commitWidth (%d) is larger than compiled limit (%d),\n"
@@ -997,15 +997,15 @@ DefaultCommit<Impl>::commitInsts()
         for (int inst_num = 0; inst_num < wbWidth &&
                  toCommit->insts[inst_num]; inst_num++) {
              DynInstPtr inst = toCommit->insts[inst_num];
-             ThreadID tid = inst->threadNumber;
-            
+            // ThreadID tid = inst->threadNumber;
+
             // Some instructions will be sent to commit without having
             // executed because they need commit to handle them.
             // E.g. Strictly ordered loads have not actually executed when they
             // are first sent to commit.  Instead commit must tell the LSQ
             // when it's ready to execute the strictly ordered load.
             if (!inst->isSquashed() && inst->isExecuted() && inst->getFault() == NoFault) {
-                int dependents = instQueue.wakeDependents(inst);
+//                int dependents = instQueue.wakeDependents(inst);
 
                 for (int i = 0; i < inst->numDestRegs(); i++) {
                     // Mark register as ready if not pinned
@@ -1319,7 +1319,7 @@ DefaultCommit<Impl>::commitHead(const DynInstPtr &head_inst, unsigned inst_num)
         DPRINTF(Commit, "Inst [tid:%i] [sn:%llu] PC %s has a fault\n",
                 tid, head_inst->seqNum, head_inst->pcState());
 
-        if (!impreciseFault) {
+        if (!impreciseFaults) {
             // cpre581 - if you want imprecise faults, don't do this
             if (iewStage->hasStoresToWB(tid) || inst_num > 0) {
                 DPRINTF(Commit,

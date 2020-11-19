@@ -71,14 +71,14 @@ DefaultIEW<Impl>::DefaultIEW(O3CPU *_cpu, DerivO3CPUParams *params)
       fuPool(params->fuPool),
       commitToIEWDelay(params->commitToIEWDelay),
       renameToIEWDelay(params->renameToIEWDelay),
+      robBypass(params->robBypass),
       issueToExecuteDelay(params->issueToExecuteDelay),
       dispatchWidth(params->dispatchWidth),
       issueWidth(params->issueWidth),
       wbNumInst(0),
       wbCycle(0),
       wbWidth(params->wbWidth),
-      numThreads(params->numThreads),
-      robBypass(params->robBypass)
+      numThreads(params->numThreads)
 {
     if (dispatchWidth > Impl::MaxWidth)
         fatal("dispatchWidth (%d) is larger than compiled limit (%d),\n"

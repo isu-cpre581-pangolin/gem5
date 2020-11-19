@@ -359,9 +359,6 @@ class DefaultIEW
      */
     bool wroteToTimeBuffer;
   
-    /** When false, removes bypassing from ROB. */
-    const bool robBypass;
-
     /** Debug function to print instructions that are issued this cycle. */
     void printAvailableInsts();
 
@@ -393,6 +390,9 @@ class DefaultIEW
 
     /** Rename to IEW delay. */
     Cycles renameToIEWDelay;
+
+    /** When false, removes bypassing from ROB. */
+    const bool robBypass;
 
     /**
      * Issue to execute delay. What this actually represents is
