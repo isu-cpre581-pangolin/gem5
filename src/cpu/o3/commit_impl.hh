@@ -41,8 +41,6 @@
 #ifndef __CPU_O3_COMMIT_IMPL_HH__
 #define __CPU_O3_COMMIT_IMPL_HH__
 
-#define IMPRECISE_FAULTS
-
 #include <algorithm>
 #include <set>
 #include <string>
@@ -1321,7 +1319,6 @@ DefaultCommit<Impl>::commitHead(const DynInstPtr &head_inst, unsigned inst_num)
         DPRINTF(Commit, "Inst [tid:%i] [sn:%llu] PC %s has a fault\n",
                 tid, head_inst->seqNum, head_inst->pcState());
 
-#ifndef IMPRECISE_FAULTS
         if (!impreciseFault) {
             // cpre581 - if you want imprecise faults, don't do this
             if (iewStage->hasStoresToWB(tid) || inst_num > 0) {
@@ -1333,10 +1330,8 @@ DefaultCommit<Impl>::commitHead(const DynInstPtr &head_inst, unsigned inst_num)
             }
         }
 
-#endif
         head_inst->setCompleted();
 
-#ifndef IMPRECISE_FAULTS
         // cpre581 - if you want imprecise faults, don't do this
         if (!impreciseFaults) {
             // If instruction has faulted, let the checker execute it and
@@ -1347,7 +1342,6 @@ DefaultCommit<Impl>::commitHead(const DynInstPtr &head_inst, unsigned inst_num)
             }
         }
 
-#endif
         assert(!thread[tid]->noSquashFromTC);
 
         // Mark that we're in state update mode so that the trap's
