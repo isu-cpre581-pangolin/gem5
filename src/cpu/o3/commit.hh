@@ -92,7 +92,6 @@ class DefaultCommit
     typedef typename CPUPol::RenameMap RenameMap;
     typedef typename CPUPol::ROB ROB;
 
-    typedef typename CPUPol::IQ IQ;
     typedef typename CPUPol::TimeStruct TimeStruct;
     typedef typename CPUPol::FetchStruct FetchStruct;
     typedef typename CPUPol::IEWStruct IEWStruct;
@@ -364,9 +363,6 @@ class DefaultCommit
     typename TimeBuffer<RenameStruct>::wire fromRename;
 
   public:
-    /** Instruction queue. */
-    IQ instQueue;  
-  
     /** ROB interface. */
     ROB *rob;
   

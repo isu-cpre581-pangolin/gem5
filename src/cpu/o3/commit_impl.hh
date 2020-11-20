@@ -80,7 +80,6 @@ DefaultCommit<Impl>::processTrapEvent(ThreadID tid)
 template <class Impl>
 DefaultCommit<Impl>::DefaultCommit(O3CPU *_cpu, DerivO3CPUParams *params)
     : commitPolicy(params->smtCommitPolicy),
-      instQueue(_cpu, nullptr, params),
       cpu(_cpu),
       iewToCommitDelay(params->iewToCommitDelay),
       commitToIEWDelay(params->commitToIEWDelay),
@@ -1005,7 +1004,7 @@ DefaultCommit<Impl>::commitInsts()
             // are first sent to commit.  Instead commit must tell the LSQ
             // when it's ready to execute the strictly ordered load.
             if (!inst->isSquashed() && inst->isExecuted() && inst->getFault() == NoFault) {
-//                int dependents = instQueue.wakeDependents(inst);
+//                int dependents = iewStage.instQueue.wakeDependents(inst);
 
                 for (int i = 0; i < inst->numDestRegs(); i++) {
                     // Mark register as ready if not pinned
@@ -1025,7 +1024,7 @@ DefaultCommit<Impl>::commitInsts()
 //                 writebackCount[tid]++;
             }
         }
-        instQueue.scheduleReadyInsts();
+        iewStage->instQueue.scheduleReadyInsts();
     }
     
     ////////////////////////////////////
