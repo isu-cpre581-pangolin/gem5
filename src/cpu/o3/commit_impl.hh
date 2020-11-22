@@ -1005,6 +1005,8 @@ DefaultCommit<Impl>::commitInsts()
             // when it's ready to execute the strictly ordered load.
             if (!inst->isSquashed() && inst->isExecuted() && inst->getFault() == NoFault) {
 //                int dependents = iewStage.instQueue.wakeDependents(inst);
+                // need the side-effects of wakeDependents
+                iewStage->instQueue.wakeDependents(inst);
 
                 for (int i = 0; i < inst->numDestRegs(); i++) {
                     // Mark register as ready if not pinned
