@@ -1549,11 +1549,12 @@ DefaultIEW<Impl>::tick()
 
         writebackInsts();
 
-        // Have the instruction queue try to schedule any ready instructions.
-        // (In actuality, this scheduling is for instructions that will
-        // be executed next cycle.)
-        instQueue.scheduleReadyInsts();
-
+        if (robBypass) {
+          // Have the instruction queue try to schedule any ready instructions.
+          // (In actuality, this scheduling is for instructions that will
+          // be executed next cycle.)
+          instQueue.scheduleReadyInsts();
+        }
         // Also should advance its own time buffers if the stage ran.
         // Not the best place for it, but this works (hopefully).
         issueToExecQueue.advance();
