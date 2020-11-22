@@ -848,7 +848,13 @@ class BaseDynInst : public ExecContext, public RefCounted
     bool isExecuted() const { return status[Executed]; }
 
     /** Sets this instruction as ready to commit. */
-    void setCanCommit() { status.set(CanCommit); }
+    void setCanCommit() {
+        DPRINTF(Commit, "[tid:%i] Marking PC %s, [sn:%llu] canCommit()\n",
+        threadNumber,
+        pcState(),
+        seqNum);
+        status.set(CanCommit);
+    }
 
     /** Clears this instruction as being ready to commit. */
     void clearCanCommit() { status.reset(CanCommit); }
