@@ -992,43 +992,6 @@ template <class Impl>
 void
 DefaultCommit<Impl>::commitInsts()
 {
-    if(!robBypass){
-        for (int inst_num = 0; inst_num < wbWidth &&
-                 toCommit->insts[inst_num]; inst_num++) {
-             DynInstPtr inst = toCommit->insts[inst_num];
-            // ThreadID tid = inst->threadNumber;
-
-            // Some instructions will be sent to commit without having
-            // executed because they need commit to handle them.
-            // E.g. Strictly ordered loads have not actually executed when they
-            // are first sent to commit.  Instead commit must tell the LSQ
-            // when it's ready to execute the strictly ordered load.
-            if (!inst->isSquashed() && inst->isExecuted() && inst->getFault() == NoFault) {
-//                int dependents = iewStage.instQueue.wakeDependents(inst);
-                // need the side-effects of wakeDependents
-                iewStage->instQueue.wakeDependents(inst);
-
-                for (int i = 0; i < inst->numDestRegs(); i++) {
-                    // Mark register as ready if not pinned
-                    if (inst->renamedDestRegIdx(i)->
-                            getNumPinnedWritesToComplete() == 0) {
-                        //DPRINTF(IEW,"Setting Destination Register %i (%s)\n",
-                                inst->renamedDestRegIdx(i)->index(),
-                                inst->renamedDestRegIdx(i)->className();
-                     scoreboard->setReg(inst->renamedDestRegIdx(i));
-                    }
-                }
-
-//                 if (dependents) {
-//                     producerInst[tid]++;
-//                     consumerInst[tid]+= dependents;
-//                 }
-//                 writebackCount[tid]++;
-            }
-        }
-        iewStage->instQueue.scheduleReadyInsts();
-    }
-    
     ////////////////////////////////////
     // Handle commit
     // Note that commit will be handled prior to putting new
@@ -1416,6 +1379,10 @@ DefaultCommit<Impl>::commitHead(const DynInstPtr &head_inst, unsigned inst_num)
     // the HTM UID is purely for correctness and debugging purposes
     if (head_inst->isHtmStart())
         iewStage->setLastRetiredHtmUid(tid, head_inst->getHtmTransactionUid());
+
+    if(!robBypass){
+        iewStage->instQueue.wakeDependents(head_inst);
+    }
 
     // Finally clear the head ROB entry.
     rob->retireHead(tid);
