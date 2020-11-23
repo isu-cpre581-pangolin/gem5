@@ -62,6 +62,7 @@
 #include "cpu/static_inst.hh"
 #include "cpu/translation.hh"
 #include "debug/HtmCpu.hh"
+#include "debug/Commit.hh"
 #include "mem/packet.hh"
 #include "mem/request.hh"
 #include "sim/byteswap.hh"
@@ -857,7 +858,13 @@ class BaseDynInst : public ExecContext, public RefCounted
     }
 
     /** Clears this instruction as being ready to commit. */
-    void clearCanCommit() { status.reset(CanCommit); }
+    void clearCanCommit() {
+        DPRINTF(Commit, "[tid:%i] Marking PC %s, [sn:%llu] clearCanCommit()\n",
+        threadNumber,
+        pcState(),
+        seqNum);
+        status.reset(CanCommit);
+        }
 
     /** Returns whether or not this instruction is ready to commit. */
     bool readyToCommit() const { return status[CanCommit]; }
