@@ -756,7 +756,7 @@ InstructionQueue<Impl>::processFUCompletion(const DynInstPtr &inst, int fu_idx)
     
     /* Commenting out this line in order to use InstructionQueue 
        constuctor with commit class instead of iew */
-    //iewStage->wakeCPU();
+    iewStage->wakeCPU();
 
     if (fu_idx > -1)
         fuPool->freeUnitNextCycle(fu_idx);
